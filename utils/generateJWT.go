@@ -10,13 +10,13 @@ import (
 func GenerateJWT(userID string) (string, error) {
 	secret := os.Getenv("SUPABASE_JWT_SECRET")
 	if secret == "" {
-		return "", jwt.ErrTokenInvalidClaims // or a custom error
+		return "", jwt.ErrTokenInvalidClaims
 	}
 
 	claims := jwt.MapClaims{
-		"sub": userID,                                // subject: the user id
-		"exp": time.Now().Add(24 * time.Hour).Unix(), // expiry
-		"iat": time.Now().Unix(),                     // issued at
+		"sub": userID,
+		"exp": time.Now().Add(24 * time.Hour).Unix(),
+		"iat": time.Now().Unix(),
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

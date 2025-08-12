@@ -49,13 +49,11 @@ func (h *UserHandler) SignUp(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Token creation failed"})
 	}
 
-	// Store in Redis
 	err = db.RedisClient.Set(db.Ctx, token, user.ID.String(), 24*time.Hour).Err()
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to save session"})
 	}
 
-	// Set HTTPOnly cookie
 	c.Cookie(&fiber.Cookie{
 		Name:     "token",
 		Value:    token,
@@ -67,7 +65,7 @@ func (h *UserHandler) SignUp(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "User created successfully",
-		"token":   token, // Keep for Postman testing
+		"token":   token,
 	})
 }
 
@@ -90,13 +88,11 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Token creation failed"})
 	}
 
-	// Store in Redis
 	err = db.RedisClient.Set(db.Ctx, token, user.ID.String(), 24*time.Hour).Err()
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to save session"})
 	}
 
-	// Set HTTPOnly cookie
 	c.Cookie(&fiber.Cookie{
 		Name:     "token",
 		Value:    token,
@@ -108,15 +104,14 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 
 	return c.JSON(fiber.Map{
 		"message": "Login successful",
-		"token":   token, // Keep for Postman testing
+		"token":   token,
 	})
 }
 
 func Logout(c *fiber.Ctx) error {
-	// Try getting token from cookie first
+
 	token := c.Cookies("token")
 
-	// Fallback to Authorization header (for Postman)
 	if token == "" {
 		authHeader := c.Get("Authorization")
 		if authHeader != "" && len(authHeader) > len("Bearer ") {
@@ -136,11 +131,11 @@ func Logout(c *fiber.Ctx) error {
 	if exists == 0 {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Token invalid or already logged out"})
 	}
-	// Remove from Redis
+
 	if err := db.RedisClient.Del(db.Ctx, token).Err(); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Logout failed"})
 	}
-	// Expire cookie
+
 	c.Cookie(&fiber.Cookie{
 		Name:     "token",
 		Value:    "",
