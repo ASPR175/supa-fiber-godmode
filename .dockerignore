@@ -1,0 +1,27 @@
+# Sensitive files
+.env
+*.env
+*.key
+*.pem
+
+# IDE & local configs
+.vscode/
+.idea/
+
+# Logs & temp files
+*.log
+tmp/
+*.tmp
+
+# Build artifacts & deps
+bin/
+node_modules/
+dist/
+build/
+
+# Git stuff
+.git
+.gitignore
+
+# Docs
+*.md

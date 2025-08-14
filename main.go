@@ -27,11 +27,9 @@ func main() {
 
 	app := fiber.New()
 
-	// Middlewares
 	app.Use(helmet.New())
 	app.Use(logger.New())
 
-	// CORS so frontend (3000) can talk to backend (8080)
 	app.Use(cors.New(cors.Config{
 		AllowOrigins:     "http://localhost:3000",
 		AllowMethods:     "GET,POST,PUT,DELETE,OPTIONS",
@@ -39,13 +37,12 @@ func main() {
 		AllowCredentials: true,
 	}))
 
-	// Routes
 	routes.UserRoutes(app, queries)
 	routes.TaskRoutes(app, queries)
 
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "8080" // backend port
+		port = "8080"
 	}
 	log.Fatal(app.Listen(":" + port))
 }
