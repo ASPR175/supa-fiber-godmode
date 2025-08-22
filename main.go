@@ -13,36 +13,69 @@ import (
 	"supa.fiber/routes"
 )
 
+
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Failed to load godotenv")
-	}
+    // Try loading .env, but don’t crash if it’s not found
+    _ = godotenv.Load()
 
-	conn := db.ConnectDB()
-	defer conn.Close()
+    conn := db.ConnectDB()
+    defer conn.Close()
 
-	queries := db.New(conn)
-	db.InitRedis()
+    queries := db.New(conn)
+    db.InitRedis()
 
-	app := fiber.New()
+    app := fiber.New()
 
-	app.Use(helmet.New())
-	app.Use(logger.New())
+    app.Use(helmet.New())
+    app.Use(logger.New())
 
-	app.Use(cors.New(cors.Config{
-		AllowOrigins:     "http://localhost:3000",
-		AllowMethods:     "GET,POST,PUT,DELETE,OPTIONS",
-		AllowHeaders:     "Origin, Content-Type, Accept, Authorization",
-		AllowCredentials: true,
-	}))
+    app.Use(cors.New(cors.Config{
+        AllowOrigins:     "http://localhost:3000",
+        AllowMethods:     "GET,POST,PUT,DELETE,OPTIONS",
+        AllowHeaders:     "Origin, Content-Type, Accept, Authorization",
+        AllowCredentials: true,
+    }))
 
-	routes.UserRoutes(app, queries)
-	routes.TaskRoutes(app, queries)
+    routes.UserRoutes(app, queries)
+    routes.TaskRoutes(app, queries)
 
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
-	}
-	log.Fatal(app.Listen(":" + port))
+    port := os.Getenv("PORT")
+    if port == "" {
+        port = "8080"
+    }
+    log.Fatal(app.Listen(":" + port))
 }
+
+// func main() {
+// 	err := godotenv.Load()
+// 	if err != nil {
+// 		log.Fatal("Failed to load godotenv")
+// 	}
+
+// 	conn := db.ConnectDB()
+// 	defer conn.Close()
+
+// 	queries := db.New(conn)
+// 	db.InitRedis()
+
+// 	app := fiber.New()
+
+// 	app.Use(helmet.New())
+// 	app.Use(logger.New())
+
+// 	app.Use(cors.New(cors.Config{
+// 		AllowOrigins:     "http://localhost:3000",
+// 		AllowMethods:     "GET,POST,PUT,DELETE,OPTIONS",
+// 		AllowHeaders:     "Origin, Content-Type, Accept, Authorization",
+// 		AllowCredentials: true,
+// 	}))
+
+// 	routes.UserRoutes(app, queries)
+// 	routes.TaskRoutes(app, queries)
+
+// 	port := os.Getenv("PORT")
+// 	if port == "" {
+// 		port = "8080"
+// 	}
+// 	log.Fatal(app.Listen(":" + port))
+// }
