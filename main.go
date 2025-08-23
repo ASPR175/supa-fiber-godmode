@@ -30,7 +30,7 @@ func main() {
     app.Use(logger.New())
 
     app.Use(cors.New(cors.Config{
-        AllowOrigins:     "http://localhost:3000",
+        AllowOrigins:     "https://task-mana-frontend-5hji.vercel.app",
         AllowMethods:     "GET,POST,PUT,DELETE,OPTIONS",
         AllowHeaders:     "Origin, Content-Type, Accept, Authorization",
         AllowCredentials: true,
